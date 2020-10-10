@@ -8,8 +8,8 @@ public class MonsterZoo {
 	//卵は最大9個まで持てる．卵を取得するとeggにtrueが代入され，
 	//移動するたびに,eggDistanceに1.0kmずつ加算される．
 	//3km移動するとランダムでモンスターが孵る
-	double eggDistance[] = new double[9];
-	boolean egg[] = new boolean[9];
+	// double eggDistance[] = new double[9];
+	// boolean egg[] = new boolean[9];
 
 	//ユーザがGetしたモンスター一覧
 	String userMonster[] = new String[100];
@@ -25,40 +25,19 @@ public class MonsterZoo {
 	void move(){
 		// this.distance++;
 		number_maneger.add_distance();
-		for(int i=0;i<this.egg.length;i++){//卵は移動距離が進むと孵化するため，何km移動したかを更新する
-			if(this.egg[i]==true){
-				this.eggDistance[i]++;
+		for(int i=0;i<number_maneger.get_egg_size();i++){//卵は移動距離が進むと孵化するため，何km移動したかを更新する
+			if(number_maneger.get_egg(i)==true){
+				number_maneger.add_eggdistance(i);
 			}
 		}
 
 		int flg1 = (int)(Math.random()*10);//0,1の場合はズーstation，7~9の場合はモンスター
 		if(flg1<=1){
-			ball_and_fruit_and_egg_get();
+			number_maneger.ball_and_fruit_and_egg_get();
 		}else if(flg1>=7){
 			monster_meet_and_battle();
 		}
 		monster_bone();
-	}
-
-	void ball_and_fruit_and_egg_get(){
-		System.out.println("ズーstationを見つけた！");
-		int b=(int)(Math.random()*3);//ball,fruits,eggがランダムに出る
-		int f=(int)(Math.random()*2);
-		int e=(int)(Math.random()*2);
-		System.out.println("ボールを"+b+"個，"+"フルーツを"+f+"個"+"卵を"+e+"個Getした！");
-		// this.balls=this.balls+b;
-		// this.fruits=this.fruits+f;
-		number_maneger.add(f,b);
-		if(e>=1){//卵を1つ以上Getしたら
-			//egg[]に10個以上卵がない場合は新しい卵データをセットする
-			for(int i=0;i<this.eggDistance.length;i++){
-				if(this.egg[i]==false){
-					this.egg[i]=true;
-					this.eggDistance[i]=0.0;
-					break;
-				}
-			}
-		}
 	}
 
 	void monster_meet_and_battle(){
@@ -66,12 +45,6 @@ public class MonsterZoo {
 		System.out.println(this.monsterZukan.get(m)+"が現れた！");
 		for(int i=0;i<3&&number_maneger.get_balls()>0;i++){//捕まえる or 3回ボールを投げるまで繰り返す
 			int r = (int)(6*Math.random());//0~5までの数字をランダムに返す
-			// if(number_maneger.get_fruits()>0){
-			// 	System.out.println("フルーツを投げた！捕まえやすさが倍になる！");
-			// 	// this.fruits--;
-			// 	number_maneger.sub_fruits();
-			// 	r = r * 2;
-			// }
 			fruits_throw(r);
 			System.out.println(this.monsterZukan.get(m)+"にボールを投げた");
 			// this.balls--;
@@ -79,13 +52,6 @@ public class MonsterZoo {
 			if (escapte_or_catch(r, m)){
 				break;
 			}
-			// if(this.monsterRare.get(m)<=r){//monsterRare[m]の値がr以下の場合
-			// 	System.out.println(this.monsterZukan.get(m)+"を捕まえた！");
-			// 	save_usermonster(m);
-			// 	break;//ボール投げ終了
-			// }else{
-			// 	System.out.println(this.monsterZukan.get(m)+"に逃げられた！");
-			// }
 		}
 	}
 
@@ -111,14 +77,14 @@ public class MonsterZoo {
 	}
 
 	void monster_bone(){
-		for(int i=0;i<this.egg.length;i++){
-			if(this.egg[i]==true&&this.eggDistance[i]>=3){
+		for(int i=0;i<number_maneger.get_egg_size();i++){
+			if(number_maneger.get_egg(i)==true&&number_maneger.get_eggdistance(i)>=3){
 				System.out.println("卵が孵った！");
 				int m = (int)(this.monsterZukan.size()*Math.random());
 				System.out.println(this.monsterZukan.get(m)+"が産まれた！");
 				save_usermonster(m);
-				this.egg[i]=false;
-				this.eggDistance[i]=0.0;
+				number_maneger.egg.set(i,false);
+				number_maneger.eggDistance.set(i,0.0);
 			}
 		}
 	}
@@ -133,15 +99,15 @@ public class MonsterZoo {
 	}
 
 	public double getDistance() {
-		return number_maneger.get_distance();
+		return this.number_maneger.get_distance();
 	}
 
 	public int getBalls() {
-		return number_maneger.get_balls();
+		return this.number_maneger.get_balls();
 	}
 
 	public int getFruits() {
-		return number_maneger.get_fruits();
+		return this.number_maneger.get_fruits();
 	}
 
 	public String[] getUserMonster() {
